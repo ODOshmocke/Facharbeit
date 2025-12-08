@@ -1,0 +1,50 @@
+Titel: 	Vergleich von Django Framework mit NodeJS am Beispiel einer Browserbasierten ToDo-App
+
+Ziel:	Praxis: Untersuchen der Unterschiede anhand von Performance, Implementierungsgeschwindigkeit und -einfachheit (Doku-Quali, Code, Libs, ...)
+	Theorie: Untersuchen der Sicherheit gegenüber Angriffen von außen und Datensicherheit (Literaturreecherche?)
+		...	
+
+
+
+
+-Was ist Django / NodeJS geg. Historie
+-Wo wird es verwendet (Weltweit)
+-Ökosystem
+
+-Vergleichen
+Das Projekt vorstellen
+	-Todo's crud
+	-Datenbank Anbindung (Sqlite)
+	-login System
+	-anderem Nutzer Todo schicken
+	-Gleiches Html, css und js
+
+CodeEffizienz (Optional)
+-Menge an Zeilen
+
+Doku Quali
+-Eher Subjektiv und darauf schauen ob Besonderheiten auffallen
+
+Bibliotheken
+-Wie, wann und weshalb musste ich darauf zurück greifen evt. sogar eigene (System)
+
+
+Performance
+-Latenz bei gleichzeitigem Zugriff (Jemeter und Autocannon)
+-Ressourcennutzung (TaskManager und htop)
+-Durchsatz Menge an Requests pro sec die das System schaft(Jemeter und Autocannon)
+
+
+Sicherheit
+
+welche Schutzmechanismen standardmäßig aktiviert sind und wie sie funktionieren. ()
+Offizielle Dokumentation (z.B. Django Security Documentation, OWASP Node.js Guide).
+Authentifizierung/Sessions --> Vergleich der Standardimplementierungen (z.B. Django Auth-System vs. JWT in Node.js).
+
+
+
+Datensicherheit	Vergleich von ORM-Features (Datenbank-Schema-Migrationen, Validierung) und deren Einfluss auf die Datenintegrität.
+	
+Dokumentationsvergleich, Analyse der Code-Qualität.
+
+

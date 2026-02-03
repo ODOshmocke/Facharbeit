@@ -1,12 +1,10 @@
-from django.shortcuts import render
-from django.views.generic import CreateView
-from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
-
-# Create your views here.
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
+from django.contrib.auth.models import User
+from .serializers import UserSerializer
 
 
-class SignUpView(CreateView):
-    form_class = UserCreationForm
-    success_url = reverse_lazy("login")
-    template_name = "registration/signup.html"
+class SignUpView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]  # Erlaubt jedem, sich zu registrieren

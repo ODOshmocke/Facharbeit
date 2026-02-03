@@ -1,10 +1,40 @@
-{% extends "base.html" %} {% block content %}
-<h1>Todo hinzufügen</h1>
-<ul>
-<form action="/home/addtodo/" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit">
-</form>
-</ul>
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h3>Debug Todo Form</h3>
+                <form id="debug-form">
+                    <input type="text" id="debug-title" class="form-control mb-2" placeholder="Titel" required>
+                    <textarea id="debug-content" class="form-control mb-2" placeholder="Inhalt"></textarea>
+                    <button type="submit" class="btn btn-primary w-100">Test-Speichern</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+
+    <button type="button" onclick="sendData()" class="btn btn-custom">Speichern</button>
+
+    <script>
+        function sendData() {
+            console.log("Button direkt geklickt!");
+            const payload = {
+                title: document.getElementById('title').value,
+                content: document.getElementById('content').value
+            };
+
+            fetch('/api/add-todo/', {
+                method: 'POST',
+                headers: apiHeaders,
+                body: JSON.stringify(payload)
+            }).then(res => {
+                if (res.ok) window.location.href = '/';
+                else alert("Fehler: " + res.status);
+            });
+        }
+    </script>
 {% endblock %}

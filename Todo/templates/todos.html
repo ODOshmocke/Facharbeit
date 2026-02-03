@@ -1,13 +1,61 @@
-{% extends "base.html" %} {% block content %}
-<h1>Todo List</h1>
-<ul>
-{% for todo in todos %}
-<li>
-    {{ todo.title }}: {% if todo.completed %} Completed{% else %} Not completed{% endif %}
-    <li>
-    {{ todo.content }}
-    </li>
-</li>
-{% endfor %}
-</ul>
+{% extends "base.html" %}
+
+{% block title %}Meine Todos{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Meine Aufgaben</h2>
+        <a href="/add/" class="btn btn-custom">+ Neues Todo</a>
+    </div>
+
+    <div id="todo-container" class="row g-4">
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Lade Daten von der API...</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/api/todos/')
+                .then(response => {
+                    if (response.status === 403) {
+                        window.location.href = '/api-auth/login/'; // Redirect falls nicht eingeloggt
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const container = document.getElementById('todo-container');
+                    container.innerHTML = '';
+
+                    if (data.length === 0) {
+                        container.innerHTML = '<div class="col-12 text-center py-5 text-muted"><h5>Noch keine Aufgaben geplant.</h5></div>';
+                        return;
+                    }
+
+                    data.forEach(todo => {
+                        const statusBadge = todo.completed
+                            ? '<span class="badge bg-success rounded-pill">Erledigt</span>'
+                            : '<span class="badge bg-warning text-dark rounded-pill">Offen</span>';
+
+                        const card = `
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 p-2">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">${todo.title}</h5>
+                                    <p class="card-text text-muted small">${todo.content}</p>
+                                    <div class="mt-3">
+                                        ${statusBadge}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                        container.innerHTML += card;
+                    });
+                })
+                .catch(error => console.error('Fehler:', error));
+        });
+    </script>
 {% endblock %}

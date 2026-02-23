@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Meine Todos{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Meine Aufgaben</h2>
+        <a href="/add/" class="btn btn-custom">+ Neues Todo</a>
+    </div>
+
+    <div id="todo-container" class="row g-4">
+        <div id="loader" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Lade deine Aufgaben...</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        function loadTodos() {
+            fetch('/todos/') // Deine API-URL
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('todo-container');
+                    container.innerHTML = ''; // Loader entfernen
+
+                    if (data.length === 0) {
+                        container.innerHTML = '<div class="col-12 text-center text-muted">Noch keine Aufgaben vorhanden.</div>';
+                        return;
+                    }
+
+                    data.forEach(todo => {
+                        const card = `
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 p-3">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">${todo.title}</h5>
+                                    <p class="card-text text-muted">${todo.content}</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <span class="badge ${todo.completed ? 'bg-success' : 'bg-warning'} rounded-pill">
+                                            ${todo.completed ? 'Erledigt' : 'Offen'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                        container.innerHTML += card;
+                    });
+                });
+        }
+
+        // Beim Laden der Seite Todos abrufen
+        document.addEventListener('DOMContentLoaded', loadTodos);
+    </script>
+{% endblock %}

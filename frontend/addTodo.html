@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Neues Todo erstellen{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h3 class="mb-4 fw-bold">Neues Todo</h3>
+                <form id="todo-form">
+                    <label for="title">Titel</label>
+                    <input type="text" id="title" placeholder="Was ist zu tun?" required>
+
+                    <label for="content">Inhalt / Details</label>
+                    <textarea id="content" rows="4" placeholder="Beschreibe die Aufgabe..."></textarea>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="submit" class="btn btn-custom w-100">Speichern</button>
+                        <a href="/" class="btn btn-outline-secondary w-100">Abbrechen</a>
+                    </div>
+                </form>
+                <div id="status-msg" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        document.getElementById('todo-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const data = {
+                title: document.getElementById('title').value,
+                content: document.getElementById('content').value
+            };
+
+            fetch('/add-todo/', {
+                method: 'POST',
+                headers: apiHeaders, // Nutzt die Header aus deiner base.html
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/'; // Zurück zur Liste
+                    } else {
+                        document.getElementById('status-msg').innerHTML =
+                            '<div class="alert alert-danger">Fehler beim Speichern!</div>';
+                    }
+                });
+        });
+    </script>
+{% endblock %}

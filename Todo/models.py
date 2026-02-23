@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class Todos(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=200)
-    content = models.TextField()
+    description = models.TextField()
     completed = models.BooleanField(default=False)
 
     def __str__(self):

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTodo | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main>
+        <header>
+            <div class="user-info">
+                <span>Angemeldet als: </span>
+                <strong id="displayUsername">...</strong>
+            </div>
+            <button class="btn-outline" onclick="logout()">Abmelden</button>
+        </header>
+
+        <section class="add-todo-section">
+            <div class="input-group dashboard-inputs">
+                <input type="text" id="todoTitle" placeholder="Neue Aufgabe...">
+                <input type="text" id="todoDesc" placeholder="Details (optional)">
+                <button class="btn-primary" onclick="addTodo()">Hinzufügen</button>
+            </div>
+        </section>
+
+        <section class="todo-container">
+            <ul id="todoList" class="todo-list">
+                </ul>
+        </section>
+    </main>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if(!token) window.location.href = 'login.html';
+
+        async function fetchUserProfile() {
+            try {
+                const res = await fetch('http://127.0.0.1:8000/users/me', {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const user = await res.json();
+                document.getElementById('displayUsername').innerText = user.username;
+            } catch (e) { logout(); }
+        }
+
+        async function loadTodos() {
+            const res = await fetch('http://127.0.0.1:8000/getTodos/', {
+                headers: {'Authorization': `Bearer ${token}`}
+            });
+            const todos = await res.json();
+            const list = document.getElementById('todoList');
+            list.innerHTML = "";
+
+            if(!Array.isArray(todos)) {
+                list.innerHTML = `<p style="text-align:center; color:var(--text-muted);">Keine Aufgaben gefunden.</p>`;
+                return;
+            }
+            
+            todos.forEach(t => {
+                const item = document.createElement('li');
+                item.className = `todo-item ${t.completed ? 'completed' : ''}`;
+                item.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox" ${t.completed ? 'checked' : ''} 
+                           onchange="toggleTodo(${t.id}, this.checked)">
+                    <div class="todo-content">
+                        <strong>${t.title}</strong>
+                        ${t.description ? `<p>${t.description}</p>` : ''}
+                    </div>
+                    <button class="btn-delete" onclick="deleteTodo(${t.id})">🗑</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        async function addTodo() {
+            const title = document.getElementById('todoTitle').value;
+            const desc = document.getElementById('todoDesc').value;
+            if(!title) return;
+
+            await fetch('http://127.0.0.1:8000/addTodo/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+                body: JSON.stringify({ title: title, description: desc })
+            });
+            document.getElementById('todoTitle').value = "";
+            document.getElementById('todoDesc').value = "";
+            loadTodos();
+        }
+
+        async function deleteTodo(id) {
+            await fetch(`http://127.0.0.1:8000/deleteTodo/${id}`, {
+                method: 'DELETE',
+                headers: {'Authorization': `Bearer ${token}`}
+            });
+            loadTodos();
+        }
+
+        async function toggleTodo(id, completed) {
+            await fetch(`http://127.0.0.1:8000/updateTodo/${id}`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+                body: JSON.stringify({ completed: completed })
+            });
+            loadTodos();
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        fetchUserProfile();
+        loadTodos();
+    </script>
+</body>
+</html>

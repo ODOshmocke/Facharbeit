@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Login</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <input type="text" id="user" placeholder="Benutzername">
+        <input type="password" id="pass" placeholder="Passwort">
+        <button onclick="login()">Anmelden</button>
+    </div>
+
+    <script>
+        async function login() {
+            const formData = new FormData();
+            formData.append('username', document.getElementById('user').value);
+            formData.append('password', document.getElementById('pass').value);
+
+            const response = await fetch('http://127.0.0.1:8000/token', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            if(data.access_token) {
+                localStorage.setItem('token', data.access_token);
+                location.href = 'dashboard.html';
+            } else { alert("Login fehlgeschlagen"); }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Registrieren</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Konto erstellen</h2>
+        <input type="text" id="user" placeholder="Benutzername">
+        <input type="email" id="email" placeholder="E-Mail">
+        <input type="password" id="pass" placeholder="Passwort">
+        <button onclick="register()">Registrieren</button>
+        <p><a href="login.html">Schon ein Konto? Login</a></p>
+    </div>
+
+    <script>
+        async function register() {
+            const response = await fetch('http://127.0.0.1:8000/create_user/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    username: document.getElementById('user').value,
+                    email: document.getElementById('email').value,
+                    hashed_password: document.getElementById('pass').value
+                })
+            });
+            if(response.ok) { alert("Erfolgreich! Bitte logge dich ein."); location.href='login.html'; }
+        }
+    </script>
+</body>
+</html>
